@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TbWarnMapper">
+    
+    <resultMap type="TbWarn" id="TbWarnResult">
+        <result property="id"    column="id"    />
+        <result property="qwLow"    column="qw_low"    />
+        <result property="qwHeight"    column="qw_height"    />
+        <result property="jyLow"    column="jy_low"    />
+        <result property="jyHeight"    column="jy_height"    />
+    </resultMap>
+
+    <sql id="selectTbWarnVo">
+        select id, qw_low, qw_height, jy_low, jy_height from tb_warn
+    </sql>
+
+    <select id="selectTbWarnList" parameterType="TbWarn" resultMap="TbWarnResult">
+        <include refid="selectTbWarnVo"/>
+        <where>  
+            <if test="qwLow != null  and qwLow != ''"> and qw_low = #{qwLow}</if>
+            <if test="qwHeight != null  and qwHeight != ''"> and qw_height = #{qwHeight}</if>
+            <if test="jyLow != null  and jyLow != ''"> and jy_low = #{jyLow}</if>
+            <if test="jyHeight != null  and jyHeight != ''"> and jy_height = #{jyHeight}</if>
+        </where>
+    </select>
+    
+    <select id="selectTbWarnById" parameterType="Long" resultMap="TbWarnResult">
+        <include refid="selectTbWarnVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTbWarn" parameterType="TbWarn" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_warn
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qwLow != null">qw_low,</if>
+            <if test="qwHeight != null">qw_height,</if>
+            <if test="jyLow != null">jy_low,</if>
+            <if test="jyHeight != null">jy_height,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qwLow != null">#{qwLow},</if>
+            <if test="qwHeight != null">#{qwHeight},</if>
+            <if test="jyLow != null">#{jyLow},</if>
+            <if test="jyHeight != null">#{jyHeight},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTbWarn" parameterType="TbWarn">
+        update tb_warn
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qwLow != null">qw_low = #{qwLow},</if>
+            <if test="qwHeight != null">qw_height = #{qwHeight},</if>
+            <if test="jyLow != null">jy_low = #{jyLow},</if>
+            <if test="jyHeight != null">jy_height = #{jyHeight},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbWarnById" parameterType="Long">
+        delete from tb_warn where id = #{id}
+    </delete>
+
+    <delete id="deleteTbWarnByIds" parameterType="String">
+        delete from tb_warn where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

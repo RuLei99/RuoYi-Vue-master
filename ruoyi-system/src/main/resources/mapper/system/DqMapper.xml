@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DqMapper">
+    
+    <resultMap type="Dq" id="DqResult">
+        <result property="id"    column="id"    />
+        <result property="shencode"    column="shencode"    />
+        <result property="xian"    column="xian"    />
+        <result property="jd"    column="jd"    />
+        <result property="wd"    column="wd"    />
+        <result property="shen"    column="shen"    />
+    </resultMap>
+
+    <sql id="selectDqVo">
+        select id, shencode, xian, jd, wd, shen from dq
+    </sql>
+
+    <select id="selectDqList" parameterType="Dq" resultMap="DqResult">
+        <include refid="selectDqVo"/>
+        <where>  
+            <if test="shencode != null  and shencode != ''"> and shencode = #{shencode}</if>
+            <if test="xian != null  and xian != ''"> and xian = #{xian}</if>
+            <if test="jd != null  and jd != ''"> and jd = #{jd}</if>
+            <if test="wd != null  and wd != ''"> and wd = #{wd}</if>
+            <if test="shen != null  and shen != ''"> and shen = #{shen}</if>
+        </where>
+    </select>
+    
+    <select id="selectDqById" parameterType="Long" resultMap="DqResult">
+        <include refid="selectDqVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDq" parameterType="Dq" useGeneratedKeys="true" keyProperty="id">
+        insert into dq
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shencode != null">shencode,</if>
+            <if test="xian != null">xian,</if>
+            <if test="jd != null">jd,</if>
+            <if test="wd != null">wd,</if>
+            <if test="shen != null">shen,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shencode != null">#{shencode},</if>
+            <if test="xian != null">#{xian},</if>
+            <if test="jd != null">#{jd},</if>
+            <if test="wd != null">#{wd},</if>
+            <if test="shen != null">#{shen},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDq" parameterType="Dq">
+        update dq
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shencode != null">shencode = #{shencode},</if>
+            <if test="xian != null">xian = #{xian},</if>
+            <if test="jd != null">jd = #{jd},</if>
+            <if test="wd != null">wd = #{wd},</if>
+            <if test="shen != null">shen = #{shen},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDqById" parameterType="Long">
+        delete from dq where id = #{id}
+    </delete>
+
+    <delete id="deleteDqByIds" parameterType="String">
+        delete from dq where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="selectxian">
+        SELECT xian FROM `dq`
+    </select>
+    <select id="selectshen">
+
+    </select>
+</mapper>

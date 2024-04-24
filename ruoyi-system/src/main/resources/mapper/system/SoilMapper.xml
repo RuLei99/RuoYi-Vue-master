@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SoilMapper">
+    
+    <resultMap type="Soil" id="SoilResult">
+        <result property="id"    column="id"    />
+        <result property="tName"    column="t_name"    />
+        <result property="tType"    column="t_type"    />
+        <result property="yzName"    column="yz_name"    />
+        <result property="mz"    column="mz"    />
+        <result property="xian"    column="xian"    />
+        <result property="shen"    column="shen"    />
+    </resultMap>
+
+    <sql id="selectSoilVo">
+        select id, t_name, t_type, yz_name, mz, xian, shen from soil
+    </sql>
+
+    <select id="selectSoilList" parameterType="Soil" resultMap="SoilResult">
+        <include refid="selectSoilVo"/>
+        <where>  
+            <if test="tName != null  and tName != ''"> and t_name like concat('%', #{tName}, '%')</if>
+            <if test="tType != null  and tType != ''"> and t_type = #{tType}</if>
+            <if test="yzName != null  and yzName != ''"> and yz_name like concat('%', #{yzName}, '%')</if>
+            <if test="mz != null  and mz != ''"> and mz = #{mz}</if>
+            <if test="xian != null  and xian != ''"> and xian = #{xian}</if>
+            <if test="shen != null  and shen != ''"> and shen = #{shen}</if>
+        </where>
+    </select>
+    
+    <select id="selectSoilById" parameterType="Long" resultMap="SoilResult">
+        <include refid="selectSoilVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSoil" parameterType="Soil" useGeneratedKeys="true" keyProperty="id">
+        insert into soil
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tName != null">t_name,</if>
+            <if test="tType != null">t_type,</if>
+            <if test="yzName != null">yz_name,</if>
+            <if test="mz != null">mz,</if>
+            <if test="xian != null">xian,</if>
+            <if test="shen != null">shen,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tName != null">#{tName},</if>
+            <if test="tType != null">#{tType},</if>
+            <if test="yzName != null">#{yzName},</if>
+            <if test="mz != null">#{mz},</if>
+            <if test="xian != null">#{xian},</if>
+            <if test="shen != null">#{shen},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSoil" parameterType="Soil">
+        update soil
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tName != null">t_name = #{tName},</if>
+            <if test="tType != null">t_type = #{tType},</if>
+            <if test="yzName != null">yz_name = #{yzName},</if>
+            <if test="mz != null">mz = #{mz},</if>
+            <if test="xian != null">xian = #{xian},</if>
+            <if test="shen != null">shen = #{shen},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSoilById" parameterType="Long">
+        delete from soil where id = #{id}
+    </delete>
+
+    <delete id="deleteSoilByIds" parameterType="String">
+        delete from soil where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

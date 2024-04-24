@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DetailMapper">
+    
+    <resultMap type="Detail" id="DetailResult">
+        <result property="id"    column="id"    />
+        <result property="diqu"    column="diqu"    />
+        <result property="qy"    column="qy"    />
+        <result property="qw"    column="qw"    />
+        <result property="maxqw"    column="maxqw"    />
+        <result property="minqw"    column="minqw"    />
+        <result property="sd"    column="sd"    />
+        <result property="jyl"    column="jyl"    />
+        <result property="fs"    column="fs"    />
+        <result property="tjDate"    column="tj_date"    />
+    </resultMap>
+
+    <sql id="selectDetailVo">
+        select id, diqu, qy, qw, maxqw, minqw, sd, tj_date,jyl,fs from detail
+    </sql>
+
+    <select id="selectDetailList" parameterType="Detail" resultMap="DetailResult">
+        <include refid="selectDetailVo"/>
+        <where>  
+            <if test="diqu != null  and diqu != ''"> and diqu = #{diqu}</if>
+            <if test="qy != null  and qy != ''"> and qy = #{qy}</if>
+            <if test="qw != null  and qw != ''"> and qw = #{qw}</if>
+            <if test="maxqw != null  and maxqw != ''"> and maxqw = #{maxqw}</if>
+            <if test="minqw != null  and minqw != ''"> and minqw = #{minqw}</if>
+            <if test="sd != null  and sd != ''"> and sd = #{sd}</if>
+            <if test="tjDate != null "> and tj_date = #{tjDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectDetailById" parameterType="Long" resultMap="DetailResult">
+        <include refid="selectDetailVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDetail" parameterType="Detail" useGeneratedKeys="true" keyProperty="id">
+        insert into detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="diqu != null">diqu,</if>
+            <if test="qy != null">qy,</if>
+            <if test="qw != null">qw,</if>
+            <if test="maxqw != null">maxqw,</if>
+            <if test="minqw != null">minqw,</if>
+            <if test="sd != null">sd,</if>
+            <if test="fs != null">fs,</if>
+            <if test="jyl != null">jyl,</if>
+            <if test="tjDate != null">tj_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="diqu != null">#{diqu},</if>
+            <if test="qy != null">#{qy},</if>
+            <if test="qw != null">#{qw},</if>
+            <if test="maxqw != null">#{maxqw},</if>
+            <if test="minqw != null">#{minqw},</if>
+            <if test="sd != null">#{sd},</if>
+            <if test="fs != null">#{fs},</if>
+            <if test="jyl != null">#{jyl},</if>
+            <if test="tjDate != null">#{tjDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDetail" parameterType="Detail">
+        update detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="diqu != null">diqu = #{diqu},</if>
+            <if test="qy != null">qy = #{qy},</if>
+            <if test="qw != null">qw = #{qw},</if>
+            <if test="maxqw != null">maxqw = #{maxqw},</if>
+            <if test="minqw != null">minqw = #{minqw},</if>
+            <if test="sd != null">sd = #{sd},</if>
+            <if test="fs != null">fs = #{fs},</if>
+            <if test="jyl != null">jyl = #{jyl},</if>
+            <if test="tjDate != null">tj_date = #{tjDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDetailById" parameterType="Long">
+        delete from detail where id = #{id}
+    </delete>
+
+    <delete id="deleteDetailByIds" parameterType="String">
+        delete from detail where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectone" resultType="com.ruoyi.system.domain.model">
+        select diqu name, qy count from detail where tj_date = (SELECT tj_date FROM detail ORDER BY tj_date desc limit 0,1)
+    </select>
+    <select id="selecttwo" resultType="com.ruoyi.system.domain.model">
+        select diqu name, maxqw count from detail where tj_date = (SELECT tj_date FROM detail ORDER BY tj_date desc limit 0,1)
+    </select>
+    <select id="selectthree" resultType="com.ruoyi.system.domain.model">
+        select diqu name, minqw count from detail where tj_date = (SELECT tj_date FROM detail ORDER BY tj_date desc limit 0,1)
+    </select>
+    <select id="selectfour" resultType="com.ruoyi.system.domain.model">
+        select diqu name, sd count from detail where tj_date = (SELECT tj_date FROM detail ORDER BY tj_date desc limit 0,1)
+    </select>
+    <select id="selectSj" parameterType="string">
+        select substr(tj_date,1,10) from detail where diqu=#{value} order by tj_date asc
+    </select>
+    <select id="selectQw"  parameterType="string">
+        select qw from detail where diqu=#{value} order by tj_date asc
+    </select>
+    <select id="selectSd"  parameterType="string">
+        select sd from detail where diqu=#{a} order by tj_date asc
+    </select>
+    <select id="selectQy"  parameterType="string">
+        select qy from detail where diqu=#{a} order by tj_date asc
+    </select>
+
+    <select id="selectDetailListHh" parameterType="Detail" resultMap="DetailResult">
+        select id, diqu, qy, qw, maxqw, minqw, sd, tj_date,jyl,fs from detail
+
+       where
+             maxqw &lt; (select qw_low from tb_warn)
+            <if test="diqu != null  and diqu != ''"> and diqu = #{diqu}</if>
+            <if test="qy != null  and qy != ''"> and qy = #{qy}</if>
+            <if test="qw != null  and qw != ''"> and qw = #{qw}</if>
+            <if test="maxqw != null  and maxqw != ''"> and maxqw = #{maxqw}</if>
+            <if test="minqw != null  and minqw != ''"> and minqw = #{minqw}</if>
+            <if test="sd != null  and sd != ''"> and sd = #{sd}</if>
+            <if test="tjDate != null "> and tj_date = #{tjDate}</if>
+    </select>
+
+    <select id="selectDetailListRh" parameterType="Detail" resultMap="DetailResult">
+        select id, diqu, qy, qw, maxqw, minqw, sd, tj_date,jyl,fs from detail
+
+        where
+             minqw &gt; (select qw_height from tb_warn)
+            <if test="diqu != null  and diqu != ''"> and diqu = #{diqu}</if>
+            <if test="qy != null  and qy != ''"> and qy = #{qy}</if>
+            <if test="qw != null  and qw != ''"> and qw = #{qw}</if>
+            <if test="maxqw != null  and maxqw != ''"> and maxqw = #{maxqw}</if>
+            <if test="minqw != null  and minqw != ''"> and minqw = #{minqw}</if>
+            <if test="sd != null  and sd != ''"> and sd = #{sd}</if>
+            <if test="tjDate != null "> and tj_date = #{tjDate}</if>
+    </select>
+
+    <select id="selectDetailListGh" parameterType="Detail" resultMap="DetailResult">
+        select id, diqu, qy, qw, maxqw, minqw, sd, tj_date,jyl,fs from detail
+
+       where  jyl &lt; (select jy_low from tb_warn)
+            <if test="diqu != null  and diqu != ''"> and diqu = #{diqu}</if>
+            <if test="qy != null  and qy != ''"> and qy = #{qy}</if>
+            <if test="qw != null  and qw != ''"> and qw = #{qw}</if>
+            <if test="maxqw != null  and maxqw != ''"> and maxqw = #{maxqw}</if>
+            <if test="minqw != null  and minqw != ''"> and minqw = #{minqw}</if>
+            <if test="sd != null  and sd != ''"> and sd = #{sd}</if>
+            <if test="tjDate != null "> and tj_date = #{tjDate}</if>
+    </select>
+
+    <select id="selectDetailListHl" parameterType="Detail" resultMap="DetailResult">
+        select id, diqu, qy, qw, maxqw, minqw, sd, tj_date,jyl,fs from detail
+
+            where  jyl &gt; (select jy_height from tb_warn)
+            <if test="diqu != null  and diqu != ''"> and diqu = #{diqu}</if>
+            <if test="qy != null  and qy != ''"> and qy = #{qy}</if>
+            <if test="qw != null  and qw != ''"> and qw = #{qw}</if>
+            <if test="maxqw != null  and maxqw != ''"> and maxqw = #{maxqw}</if>
+            <if test="minqw != null  and minqw != ''"> and minqw = #{minqw}</if>
+            <if test="sd != null  and sd != ''"> and sd = #{sd}</if>
+            <if test="tjDate != null "> and tj_date = #{tjDate}</if>
+    </select>
+    <select id="selectZhfx">
+        select '寒害' as post, count(*) number
+        from (
+                 select id,
+                        diqu,
+                        qy,
+                        qw,
+                        maxqw,
+                        minqw,
+                        sd,
+                        tj_date,
+                        jyl,
+                        fs
+                 from detail
+
+                 where maxqw &lt; (select qw_low from tb_warn)
+             ) a
+union
+        select '热害' as post, count(*) number from (
+        select id, diqu, qy, qw, maxqw, minqw, sd, tj_date,jyl,fs from detail
+
+        where
+            minqw &gt; (select qw_height from tb_warn)
+) b
+union
+        select '干旱' as post, count(*) number from (
+        select id, diqu, qy, qw, maxqw, minqw, sd, tj_date,jyl,fs from detail
+
+        where  jyl &lt; (select jy_low from tb_warn)
+) c
+union
+        select '洪涝' as post, count(*) number from(
+        select id, diqu, qy, qw, maxqw, minqw, sd, tj_date,jyl,fs from detail
+
+        where  jyl &gt; (select jy_height from tb_warn)
+) d
+    </select>
+</mapper>

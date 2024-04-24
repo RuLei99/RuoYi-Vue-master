@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TryfMapper">
+    
+    <resultMap type="Tryf" id="TryfResult">
+        <result property="id"    column="id"    />
+        <result property="cdname"    column="cdname"    />
+        <result property="dizhi"    column="dizhi"    />
+        <result property="shen"    column="shen"    />
+        <result property="xian"    column="xian"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectTryfVo">
+        select id, cdname, dizhi, shen, xian, type from tryf
+    </sql>
+
+    <select id="selectTryfList" parameterType="Tryf" resultMap="TryfResult">
+        <include refid="selectTryfVo"/>
+        <where>  
+            <if test="cdname != null  and cdname != ''"> and cdname like concat('%', #{cdname}, '%')</if>
+            <if test="dizhi != null  and dizhi != ''"> and dizhi = #{dizhi}</if>
+            <if test="shen != null  and shen != ''"> and shen = #{shen}</if>
+            <if test="xian != null  and xian != ''"> and xian = #{xian}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectTryfById" parameterType="Long" resultMap="TryfResult">
+        <include refid="selectTryfVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTryf" parameterType="Tryf" useGeneratedKeys="true" keyProperty="id">
+        insert into tryf
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cdname != null">cdname,</if>
+            <if test="dizhi != null">dizhi,</if>
+            <if test="shen != null">shen,</if>
+            <if test="xian != null">xian,</if>
+            <if test="type != null">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cdname != null">#{cdname},</if>
+            <if test="dizhi != null">#{dizhi},</if>
+            <if test="shen != null">#{shen},</if>
+            <if test="xian != null">#{xian},</if>
+            <if test="type != null">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTryf" parameterType="Tryf">
+        update tryf
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cdname != null">cdname = #{cdname},</if>
+            <if test="dizhi != null">dizhi = #{dizhi},</if>
+            <if test="shen != null">shen = #{shen},</if>
+            <if test="xian != null">xian = #{xian},</if>
+            <if test="type != null">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTryfById" parameterType="Long">
+        delete from tryf where id = #{id}
+    </delete>
+
+    <delete id="deleteTryfByIds" parameterType="String">
+        delete from tryf where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectone" resultType="com.ruoyi.system.domain.model">
+        SELECT d.xian name ,count(d.xian) count  FROM `dq` d left join soil s on d.xian = s.xian   group by d.xian
+    </select>
+    <select id="selecttwo" resultType="com.ruoyi.system.domain.model">
+        SELECT s.t_type name ,count(s.t_type) count  FROM `dq` d left join soil s on d.xian = s.xian   group by s.t_type
+    </select>
+    <select id="selectthree" resultType="com.ruoyi.system.domain.model">
+        select shixian name, count(shixian) count from trpm group by shixian
+    </select>
+    <select id="selectfour" resultType="com.ruoyi.system.domain.model">
+        SELECT cdname name, count(cdname) count FROM `tryf` group by cdname
+    </select>
+</mapper>
